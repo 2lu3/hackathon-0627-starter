@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.application;
 
 /**
  * パスワード登録の入力 DTO。

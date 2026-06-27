@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.domain;
 
 /**
  * email を正として、ユーザーに連携された認証プロバイダを表す domain model。

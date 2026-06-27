@@ -1,4 +1,7 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.repository;
+
+import com.youtrust.hackathon.domain.AuthenticatedUser;
+import com.youtrust.hackathon.domain.User;
 
 /**
  * User の永続化を担当するクラス。
@@ -8,9 +11,9 @@ package com.youtrust.hackathon;
  */
 public class UserDBResistory {
 
-    private final UserRegistrationService.Database database;
+    private final Database database;
 
-    public UserDBResistory(UserRegistrationService.Database database) {
+    public UserDBResistory(Database database) {
         this.database = database;
     }
 

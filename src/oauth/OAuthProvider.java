@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.oauth;
 
 /**
  * OAuth プロバイダ（GitHub / 将来の Google・LINE など）による認証の共通インターフェース。
@@ -8,7 +8,7 @@ package com.youtrust.hackathon;
  * 各実装クラスに閉じ込める。
  *
  * <p>新しいベンダーを追加するときは、このインターフェースを実装したクラスを 1 つ作り、
- * {@link UserRegistrationService#registerOAuthProvider(OAuthProvider)} で登録するだけでよい。
+     * {@link com.youtrust.hackathon.service.UserRegistrationService#registerOAuthProvider(OAuthProvider)} で登録するだけでよい。
  * {@code UserRegistrationService} 側の登録パイプラインは一切変更しなくて済む（開放閉鎖原則）。
  */
 public interface OAuthProvider {

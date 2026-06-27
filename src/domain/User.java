@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.domain;
 
 /**
  * アプリケーションユーザーを表す domain model。

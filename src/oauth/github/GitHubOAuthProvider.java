@@ -1,4 +1,7 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.oauth.github;
+
+import com.youtrust.hackathon.oauth.OAuthException;
+import com.youtrust.hackathon.oauth.OAuthProvider;
 
 /**
  * GitHub OAuth による認証の実装。
