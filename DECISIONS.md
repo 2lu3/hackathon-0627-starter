@@ -130,4 +130,22 @@ GitHub 側で email が非公開または変更された場合の扱いは弱く
 
 ---
 
+### [ADR-007] domain model を UserRegistrationService の inner class から分離した
+
+**日時**：2026-06-27
+
+**状況**：
+`User`、`AuthenticatedUser`、`AuthProviderCredential`、`RegisterInput`、`RegisterResult` が `UserRegistrationService` の inner class として定義されていた。この状態だと domain model が service 層に従属して見え、`UserDBResistory` やテストからも `UserRegistrationService.User` のように参照する必要があった。
+
+**決定**：
+各 model / DTO を `src` 配下の独立 class に切り出した。`UserRegistrationService` はそれらを利用するだけにし、domain model を所有しない構造にした。
+
+**理由**：
+domain model を service から独立させることで、保存処理・認証処理・テストから自然に再利用できる。サービスの責務は登録フローの制御に限定され、モデルの所属も明確になる。
+
+**トレードオフ**：
+ファイル数は増えるが、モデルの参照関係が `UserRegistrationService.X` から通常の class 参照になり、責務境界が読み取りやすくなるため採用した。
+
+---
+
 <!-- 判断が増えたらADR-005, ADR-006 ... と追加してください -->

@@ -166,28 +166,6 @@ public class UserRegistrationService {
         database.saveAuthProvider(new AuthProviderCredential(user.getEmail(), provider));
     }
 
-    // ====================================================================
-    // 認証成功後の正規化された本人情報（各入口の合流点）
-    // ====================================================================
-    static class AuthenticatedUser {
-        private final String email;
-        private final String name;
-        private final String provider;     // "password" / "github" / ...
-        private final String passwordHash; // パスワード登録のみ
-
-        AuthenticatedUser(String email, String name, String provider, String passwordHash) {
-            this.email = email;
-            this.name = name;
-            this.provider = provider;
-            this.passwordHash = passwordHash;
-        }
-
-        public String getEmail() { return email; }
-        public String getName() { return name; }
-        public String getProvider() { return provider; }
-        public String getPasswordHash() { return passwordHash; }
-    }
-
     // ---- 以下はモッククラス ----
 
     static class Database {
@@ -203,61 +181,6 @@ public class UserRegistrationService {
         public void send(String to, String subject, String body) {
             System.out.println("Email sent to: " + to);
         }
-    }
-
-    static class User {
-        private String id;
-        private String email;
-        private String name;
-        private String password;   // OAuth 登録では null
-
-        public String getId() { return id; }
-        public void setId(String id) { this.id = id; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-    }
-
-    static class AuthProviderCredential {
-        private final String email;
-        private final String provider;
-
-        AuthProviderCredential(String email, String provider) {
-            this.email = email;
-            this.provider = provider;
-        }
-
-        public String getEmail() { return email; }
-        public String getProvider() { return provider; }
-    }
-
-    static class RegisterInput {
-        private String email;
-        private String password;
-        private String name;
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-    }
-
-    static class RegisterResult {
-        private final boolean success;
-        private final String userId;
-        private final String message;
-        public RegisterResult(boolean success, String userId, String message) {
-            this.success = success;
-            this.userId = userId;
-            this.message = message;
-        }
-        public boolean isSuccess() { return success; }
-        public String getUserId() { return userId; }
-        public String getMessage() { return message; }
     }
 
     // ====================================================================

@@ -14,8 +14,8 @@ public class UserDBResistory {
         this.database = database;
     }
 
-    public UserRegistrationService.User save(UserRegistrationService.AuthenticatedUser auth) {
-        UserRegistrationService.User user = new UserRegistrationService.User();
+    public User save(AuthenticatedUser auth) {
+        User user = new User();
         user.setEmail(auth.getEmail());
         user.setName(auth.getName());
         user.setPassword(auth.getPasswordHash());

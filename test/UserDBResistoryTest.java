@@ -11,14 +11,14 @@ public class UserDBResistoryTest {
         RecordingDatabase database = new RecordingDatabase();
         UserDBResistory resistory = new UserDBResistory(database);
 
-        UserRegistrationService.AuthenticatedUser auth =
-                new UserRegistrationService.AuthenticatedUser(
+        AuthenticatedUser auth =
+                new AuthenticatedUser(
                         "alice@example.com",
                         "Alice",
                         "password",
                         "password123_hashed");
 
-        UserRegistrationService.User saved = resistory.save(auth);
+        User saved = resistory.save(auth);
 
         assertEquals("user_test", saved.getId(), "id");
         assertEquals("alice@example.com", database.savedUser.getEmail(), "email");
@@ -33,10 +33,10 @@ public class UserDBResistoryTest {
     }
 
     private static class RecordingDatabase extends UserRegistrationService.Database {
-        private UserRegistrationService.User savedUser;
+        private User savedUser;
 
         @Override
-        public void save(UserRegistrationService.User user) {
+        public void save(User user) {
             this.savedUser = user;
             user.setId("user_test");
         }
