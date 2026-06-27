@@ -24,6 +24,7 @@ public class UserRegistrationService {
     private static final String PROVIDER_PASSWORD = "password";
 
     private final Database database;
+    private final UserDBResistory userDBResistory;
     private final EmailClient emailClient;
 
     /** providerId -> OAuthProvider。登録済みのベンダーを保持する。 */
@@ -35,8 +36,13 @@ public class UserRegistrationService {
 
     /** 依存を注入するコンストラクタ（テスト時にモックを差し込めるようにする）。 */
     public UserRegistrationService(Database database, EmailClient emailClient) {
+        this(database, emailClient, new UserDBResistory(database));
+    }
+
+    public UserRegistrationService(Database database, EmailClient emailClient, UserDBResistory userDBResistory) {
         this.database = database;
         this.emailClient = emailClient;
+        this.userDBResistory = userDBResistory;
     }
 
     /** OAuth プロバイダを登録する（例: GitHubOAuthProvider）。 */
@@ -102,12 +108,7 @@ public class UserRegistrationService {
             return new RegisterResult(true, existingUser.getId(), "認証プロバイダを連携しました");
         }
 
-        // DB 保存
-        User user = new User();
-        user.setEmail(auth.getEmail());
-        user.setName(auth.getName());
-        user.setPassword(auth.getPasswordHash());   // OAuth の場合は null
-        database.save(user);
+        User user = userDBResistory.save(auth);
 
         if (!PROVIDER_PASSWORD.equals(auth.getProvider())) {
             linkAuthProvider(user, auth.getProvider());
