@@ -65,7 +65,7 @@ public class GitHubOAuthProvider implements OAuthProvider {
      *
      * <p>本番実装イメージ:
      * <pre>
-     *   GET https://api.github.com/user           → id, login(name), email
+     *   GET https://api.github.com/user           → login(name), email
      *   GET https://api.github.com/user/emails    → primary かつ verified なメールを採用
      *                                                （GitHub はメール非公開のことがあるため）
      * </pre>
@@ -75,7 +75,6 @@ public class GitHubOAuthProvider implements OAuthProvider {
             throw new OAuthException("アクセストークンの取得に失敗しました");
         }
         // TODO: 実 HTTP 通信に差し替える。ここではモックのプロフィールを返す。
-        String externalId = "12345";
         String email = "octocat@example.com";
         String name = "The Octocat";
 
@@ -83,6 +82,6 @@ public class GitHubOAuthProvider implements OAuthProvider {
             // GitHub でメールが取得できないケース。本番では追加同意フローやエラー表示を検討する。
             throw new OAuthException("GitHub からメールアドレスを取得できませんでした");
         }
-        return new OAuthUserInfo(externalId, email, name);
+        return new OAuthUserInfo(email, name);
     }
 }

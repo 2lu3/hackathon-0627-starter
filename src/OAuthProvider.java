@@ -1,7 +1,7 @@
 package com.youtrust.hackathon;
 
 /**
- * 外部 ID プロバイダ（GitHub / 将来の Google・LINE など）による認証の共通インターフェース。
+ * OAuth プロバイダ（GitHub / 将来の Google・LINE など）による認証の共通インターフェース。
  *
  * <p>「認可コード → ユーザー情報」という流れだけを共通の契約として定義し、
  * ベンダー固有の処理（トークンエンドポイントの URL、プロフィール JSON のマッピング等）は
@@ -31,24 +31,17 @@ public interface OAuthProvider {
     /**
      * プロバイダから取得したユーザー情報を、ベンダー差異を吸収した共通表現にしたもの。
      *
-     * <p>これを介すことで、後続の登録パイプライン（重複チェック・保存・ウェルカムメール・ログ）は
-     * どのプロバイダ経由かを意識せずに処理できる。
+     * <p>このコードベースではアプリのユーザー同一性を email に寄せるため、
+     * プロバイダ固有 ID は使わず、認証済み email を後続処理の基準にする。
      */
     final class OAuthUserInfo {
 
-        /** プロバイダ側で一意なユーザー ID（例: GitHub の数値 id）。アカウント連携の基準に使える。 */
-        private final String externalId;
         private final String email;
         private final String name;
 
-        public OAuthUserInfo(String externalId, String email, String name) {
-            this.externalId = externalId;
+        public OAuthUserInfo(String email, String name) {
             this.email = email;
             this.name = name;
-        }
-
-        public String getExternalId() {
-            return externalId;
         }
 
         public String getEmail() {

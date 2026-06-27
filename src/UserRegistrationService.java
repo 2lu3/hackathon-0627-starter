@@ -54,7 +54,6 @@ public class UserRegistrationService {
                 input.getEmail(),
                 input.getName(),
                 PROVIDER_PASSWORD,
-                null,                          // 外部 ID なし
                 hashPassword(input.getPassword()));
 
         return register(auth);
@@ -83,7 +82,6 @@ public class UserRegistrationService {
                 info.getEmail(),
                 info.getName(),
                 provider.providerId(),
-                info.getExternalId(),
                 null);                         // パスワードなし
 
         return register(auth);
@@ -93,9 +91,15 @@ public class UserRegistrationService {
     // 共通登録パイプライン: すべての入口が必ずここを通る
     // ====================================================================
     private RegisterResult register(AuthenticatedUser auth) {
-        // 重複チェック
-        if (database.findByEmail(auth.getEmail()) != null) {
+        User existingUser = database.findByEmail(auth.getEmail());
+        if (existingUser != null && PROVIDER_PASSWORD.equals(auth.getProvider())) {
             throw new IllegalArgumentException("このメールアドレスはすでに登録されています");
+        }
+
+        if (existingUser != null) {
+            linkAuthProvider(existingUser, auth.getProvider());
+            logger.info("認証プロバイダ連携完了: " + existingUser.getEmail() + " (provider=" + auth.getProvider() + ")");
+            return new RegisterResult(true, existingUser.getId(), "認証プロバイダを連携しました");
         }
 
         // DB 保存
@@ -103,9 +107,11 @@ public class UserRegistrationService {
         user.setEmail(auth.getEmail());
         user.setName(auth.getName());
         user.setPassword(auth.getPasswordHash());   // OAuth の場合は null
-        user.setProvider(auth.getProvider());
-        user.setExternalId(auth.getExternalId());
         database.save(user);
+
+        if (!PROVIDER_PASSWORD.equals(auth.getProvider())) {
+            linkAuthProvider(user, auth.getProvider());
+        }
 
         // ウェルカムメール送信（全方法共通）
         sendWelcomeEmail(user);
@@ -152,6 +158,13 @@ public class UserRegistrationService {
         emailClient.send(user.getEmail(), subject, body);
     }
 
+    private void linkAuthProvider(User user, String provider) {
+        if (database.findAuthProvider(user.getEmail(), provider) != null) {
+            throw new IllegalArgumentException("この認証プロバイダはすでに連携されています");
+        }
+        database.saveAuthProvider(new AuthProviderCredential(user.getEmail(), provider));
+    }
+
     // ====================================================================
     // 認証成功後の正規化された本人情報（各入口の合流点）
     // ====================================================================
@@ -159,22 +172,18 @@ public class UserRegistrationService {
         private final String email;
         private final String name;
         private final String provider;     // "password" / "github" / ...
-        private final String externalId;   // OAuth のみ。プロバイダ側の一意 ID
         private final String passwordHash; // パスワード登録のみ
 
-        AuthenticatedUser(String email, String name, String provider,
-                          String externalId, String passwordHash) {
+        AuthenticatedUser(String email, String name, String provider, String passwordHash) {
             this.email = email;
             this.name = name;
             this.provider = provider;
-            this.externalId = externalId;
             this.passwordHash = passwordHash;
         }
 
         public String getEmail() { return email; }
         public String getName() { return name; }
         public String getProvider() { return provider; }
-        public String getExternalId() { return externalId; }
         public String getPasswordHash() { return passwordHash; }
     }
 
@@ -182,7 +191,11 @@ public class UserRegistrationService {
 
     static class Database {
         public User findByEmail(String email) { return null; }
+        public AuthProviderCredential findAuthProvider(String email, String provider) { return null; }
         public void save(User user) { user.setId("user_" + System.currentTimeMillis()); }
+        public void saveAuthProvider(AuthProviderCredential credential) {
+            System.out.println("Linked " + credential.getProvider() + " auth to: " + credential.getEmail());
+        }
     }
 
     static class EmailClient {
@@ -196,8 +209,6 @@ public class UserRegistrationService {
         private String email;
         private String name;
         private String password;   // OAuth 登録では null
-        private String provider;   // 登録経路（"password" / "github" / ...）
-        private String externalId; // OAuth プロバイダ側の一意 ID
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
@@ -207,10 +218,19 @@ public class UserRegistrationService {
         public void setName(String name) { this.name = name; }
         public String getPassword() { return password; }
         public void setPassword(String password) { this.password = password; }
+    }
+
+    static class AuthProviderCredential {
+        private final String email;
+        private final String provider;
+
+        AuthProviderCredential(String email, String provider) {
+            this.email = email;
+            this.provider = provider;
+        }
+
+        public String getEmail() { return email; }
         public String getProvider() { return provider; }
-        public void setProvider(String provider) { this.provider = provider; }
-        public String getExternalId() { return externalId; }
-        public void setExternalId(String externalId) { this.externalId = externalId; }
     }
 
     static class RegisterInput {
