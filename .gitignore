@@ -1,0 +1,11 @@
+# Compiled output
+bin/
+*.class
+
+# Eclipse IDE
+.classpath
+.project
+.settings/
+
+# Session logs
+conversation-logs/
