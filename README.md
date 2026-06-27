@@ -1,5 +1,8 @@
 # 設計力を磨く！現役エンジニア伴走ハッカソン 🔥
 
+
+[google doc](https://docs.google.com/document/d/1XS1Ll-ADw6lQbgvs8KNRZlHS8gBWP82C9ql979sjV5Y/edit?usp=sharing)
+
 **2025年6月27日（土） 15:30〜19:00｜虎ノ門ヒルズ森タワー5階**
 
 ## このリポジトリについて
