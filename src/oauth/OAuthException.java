@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.oauth;
 
 /**
  * OAuth 認証（認可コードの交換・プロフィール取得など）に失敗したことを表す例外。

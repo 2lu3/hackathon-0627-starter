@@ -1,5 +1,16 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.service;
 
+import com.youtrust.hackathon.application.RegisterInput;
+import com.youtrust.hackathon.application.RegisterResult;
+import com.youtrust.hackathon.domain.AuthProviderCredential;
+import com.youtrust.hackathon.domain.AuthenticatedUser;
+import com.youtrust.hackathon.domain.User;
+import com.youtrust.hackathon.email.EmailClient;
+import com.youtrust.hackathon.oauth.OAuthException;
+import com.youtrust.hackathon.oauth.OAuthProvider;
+import com.youtrust.hackathon.oauth.github.GitHubOAuthProvider;
+import com.youtrust.hackathon.repository.Database;
+import com.youtrust.hackathon.repository.UserDBResistory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -164,23 +175,6 @@ public class UserRegistrationService {
             throw new IllegalArgumentException("この認証プロバイダはすでに連携されています");
         }
         database.saveAuthProvider(new AuthProviderCredential(user.getEmail(), provider));
-    }
-
-    // ---- 以下はモッククラス ----
-
-    static class Database {
-        public User findByEmail(String email) { return null; }
-        public AuthProviderCredential findAuthProvider(String email, String provider) { return null; }
-        public void save(User user) { user.setId("user_" + System.currentTimeMillis()); }
-        public void saveAuthProvider(AuthProviderCredential credential) {
-            System.out.println("Linked " + credential.getProvider() + " auth to: " + credential.getEmail());
-        }
-    }
-
-    static class EmailClient {
-        public void send(String to, String subject, String body) {
-            System.out.println("Email sent to: " + to);
-        }
     }
 
     // ====================================================================

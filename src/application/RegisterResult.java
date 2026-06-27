@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.application;
 
 /**
  * ユーザー登録結果の DTO。

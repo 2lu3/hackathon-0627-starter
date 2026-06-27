@@ -1,4 +1,7 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.repository;
+
+import com.youtrust.hackathon.domain.AuthenticatedUser;
+import com.youtrust.hackathon.domain.User;
 
 public class UserDBResistoryTest {
 
@@ -32,7 +35,7 @@ public class UserDBResistoryTest {
         }
     }
 
-    private static class RecordingDatabase extends UserRegistrationService.Database {
+    private static class RecordingDatabase extends Database {
         private User savedUser;
 
         @Override

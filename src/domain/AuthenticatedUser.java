@@ -1,4 +1,4 @@
-package com.youtrust.hackathon;
+package com.youtrust.hackathon.domain;
 
 /**
  * 認証成功後の正規化された本人情報。
